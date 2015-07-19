@@ -115,6 +115,8 @@ DEF_PROC(version);
 DEF_PROC(dbsize);
 DEF_PROC(compact);
 DEF_PROC(clear_binlog);
+DEF_PROC(select);
+DEF_PROC(quit);
 
 DEF_PROC(get_key_range);
 DEF_PROC(ignore_key_range);
@@ -237,6 +239,8 @@ void SSDBServer::reg_procs(NetworkServer *net){
 	REG_PROC(sync140, "b");
 	REG_PROC(info, "r");
 	REG_PROC(version, "r");
+	REG_PROC(select, "r");
+	REG_PROC(quit, "r");
 	REG_PROC(dbsize, "rt");
 	// doing compaction in a reader thread, because we have only one
 	// writer thread(for performance reason); we don't want to block writes
@@ -468,6 +472,18 @@ int proc_version(NetworkServer *net, Link *link, const Request &req, Response *r
 	resp->push_back("ok");
 	resp->push_back(SSDB_VERSION);
 	return 0;
+}
+
+int proc_select(NetworkServer *net, Link *link, const Request &req, Response *resp){
+        resp->push_back("ok");
+        resp->push_back("0");
+        return 0;
+}
+
+int proc_quit(NetworkServer *net, Link *link, const Request &req, Response *resp){
+        resp->push_back("ok");
+        resp->push_back("bye!");
+        return 0;
 }
 
 int proc_info(NetworkServer *net, Link *link, const Request &req, Response *resp){
